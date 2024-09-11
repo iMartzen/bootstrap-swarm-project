@@ -1,11 +1,11 @@
 Bootstrap Swarm Project 
 =============================
 
-![bootstrap-swarm-project](bootstrap-swarm-project.webp)
+<img src="./bootstrap-swarm-project.webp" alt="Bootstrap Swarm Project" width="200" height="200">
 
 # Description
 
-This Ansible playbook initializes a Docker Swarm cluster on a group of Raspberry Pi devices. It includes roles for system updates, Docker installation, system configuration, and Swarm cluster initialization.
+This Ansible playbook initializes a Docker Swarm cluster on a group of Raspberry Pi devices. It includes roles for system updates, Docker installation, system configuration, and Swarm cluster initialization. 
 
 # Installation
 
