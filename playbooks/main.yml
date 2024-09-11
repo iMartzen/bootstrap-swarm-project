@@ -1,0 +1,11 @@
+# playbooks/main.yml
+
+- name: Bootstrap Swarm
+  hosts: swarm
+  become: true
+  roles:
+    - ansible-role-python-raspbian-bootstrap
+    - ansible-role-system-upgrade
+    - ansible-role-install-docker
+    - ansible-role-system-configuration
+    - ansible-role-swarm-initialization

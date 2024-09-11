@@ -1,0 +1,6 @@
+# roles/personal-configuration/handlers/main.yml
+
+- name: Restart SSH
+  ansible.builtin.service:
+    name: ssh
+    state: restarted

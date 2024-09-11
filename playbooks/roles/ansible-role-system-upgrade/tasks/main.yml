@@ -1,0 +1,30 @@
+# roles/ansible-role-update-system/tasks/main.yml
+
+- name: Update APT package list
+  ansible.builtin.apt:
+    update_cache: true
+
+- name: Upgrade all APT packages
+  ansible.builtin.apt:
+    upgrade: dist
+    autoremove: true
+    autoclean: true
+
+- name: Perform some pre-reboot tasks
+  ansible.builtin.command: echo "Starting reboot"
+  changed_when: false
+
+- name: Reboot the server
+  ansible.builtin.reboot:
+    reboot_timeout: 300  # Wait for up to 5 minutes for the reboot to complete
+
+- name: Wait for the server to come back online
+  ansible.builtin.wait_for:
+    port: 22
+    host: "{{ ansible_host }}"
+    delay: 10
+    timeout: 300
+
+- name: Perform post-reboot tasks
+  ansible.builtin.command: echo "Reboot is done; playbook will continue"
+  changed_when: false

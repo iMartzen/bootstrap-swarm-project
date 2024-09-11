@@ -1,0 +1,98 @@
+# roles/ansible-role-system-configuration/tasks/main.yml
+
+- name: Generate missing SSH host keys
+  ansible.builtin.command:
+    cmd: ssh-keygen -A
+  args:
+    creates: /etc/ssh/ssh_host_rsa_key
+
+- name: Customize MOTD
+  ansible.builtin.copy:
+    src: motd
+    dest: /etc/motd
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Disable PAM for SSH
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^#?UsePAM'
+    line: 'UsePAM no'
+    state: present
+    validate: '/usr/sbin/sshd -t -f %s'
+
+- name: Disable root login via SSH
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^#?PermitRootLogin'
+    line: 'PermitRootLogin no'
+    state: present
+    validate: '/usr/sbin/sshd -t -f %s'
+
+- name: Ensure PrintMotd is enabled
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^#?PrintMotd'
+    line: 'PrintMotd yes'
+    state: present
+    validate: '/usr/sbin/sshd -t -f %s'
+
+- name: Reload SSH service
+  ansible.builtin.service:
+    name: ssh
+    state: reloaded
+
+- name: Create mount point
+  ansible.builtin.file:
+    path: /shares/swarm
+    state: directory
+    mode: '0755'
+  become: true
+
+- name: Ensure NFS entry is in /etc/fstab
+  ansible.builtin.lineinfile:
+    path: /etc/fstab
+    line: '10.0.0.10:/volume1/SWARM /shares/swarm nfs noauto,nofail,x-systemd.automount,x-systemd.device-timeout=90 0 0'
+    state: present
+
+- name: Mount NFS Share
+  ansible.posix.mount:
+    path: /shares/swarm
+    src: 10.0.0.10:/volume1/SWARM
+    fstype: nfs
+    opts: defaults
+    state: mounted
+  become: true
+
+- name: Ensure directory has correct permissions
+  block:
+    - name: Add test file for permission check
+      ansible.builtin.file:
+        path: /shares/swarm/testfile
+        state: touch
+        mode: '0777'
+
+    - name: Check directory permissions
+      ansible.builtin.stat:
+        path: /shares/swarm
+      register: dir_permissions
+
+    - name: Set directory permissions if needed
+      ansible.builtin.file:
+        path: /shares/
+        mode: '0777'
+      when: dir_permissions.stat.mode != '0777'
+
+    - name: Remove test file
+      ansible.builtin.file:
+        path: /shares/swarm/testfile
+        state: absent
+
+- name: Add user sync for syno
+  ansible.builtin.user:
+    name: syno
+    system: true
+    uid: 1024
+    group: 100
+    create_home: false

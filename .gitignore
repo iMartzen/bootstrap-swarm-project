@@ -1,0 +1,6 @@
+# Configuration 
+.vscode/*
+
+# Personal (see examples for ideas)
+inventory.ini
+motd
