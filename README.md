@@ -42,7 +42,7 @@ You can create a custom message of the day (MOTD), which appears when logging in
 
 ### Using Docker Visualizer
 
-The `swarm-initialization` role includes a step to create a Docker service running Docker Visualizer, which is published on port 8080.
+The `swarm-initialization` role includes a step to create a Docker service running Docker Visualizer, which is published on port 8081.
 
 # Ansible roles
 
