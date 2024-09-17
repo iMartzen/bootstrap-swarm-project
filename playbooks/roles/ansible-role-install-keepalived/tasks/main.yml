@@ -1,0 +1,30 @@
+# roles/ansible-role-install-keepalived/tasks/main.yml
+
+- name: Install necessary packages
+  ansible.builtin.apt:
+    name:
+      - keepalived
+    state: present
+    update_cache: true
+
+- name: Create Keepalived configuration file with different priorities
+  template:
+    src: ./files/keepalived.conf.j2
+    dest: /etc/keepalived/keepalived.conf
+    mode: '0644'
+  vars:
+    priority: "{{ hostvars[inventory_hostname].priority }}"
+
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: Restart Keepalived service
+  ansible.builtin.systemd:
+    name: keepalived
+    state: restarted
+
+- name: Check status of Keepalived service
+  ansible.builtin.systemd:
+    name: keepalived
+    state: started

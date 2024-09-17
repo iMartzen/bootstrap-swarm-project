@@ -1,0 +1,24 @@
+vrrp_script dockerd_check {
+   script "/usr/bin/pgrep dockerd"
+   interval 10
+   weight -20
+}
+
+vrrp_instance PROXY {
+    state MASTER
+    interface eth0
+    mcast_src_ip {{ mcast_src_ip }} # The multicast source IP based on your network/preferences
+    virtual_router_id 100
+    priority {{ priority }} # The priority is different for each node
+    advert_int 1
+    authentication {
+        auth_type PASS
+        auth_pass 1066
+    }
+    virtual_ipaddress {
+        {{ virtual_ipaddress }} # The virtual ipaddress source IP based on your network/preferences
+    }
+    track_script {
+      dockerd_check
+    }
+}
