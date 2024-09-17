@@ -5,7 +5,15 @@ Bootstrap Swarm Project
 
 # Description
 
-This Ansible playbook initializes a Docker Swarm cluster on a group of Raspberry Pi devices. It includes roles for system updates, Docker installation, system configuration, and Swarm cluster initialization. 
+This Ansible playbook initializes a Docker Swarm cluster on a group of Raspberry Pi devices. It includes roles for system updates, Docker installation, Keepalived configuration system configuration, and Swarm cluster initialization. 
+
+Please read through the project to get a better understanding of what it does and what you need in order to be successful. 
+
+# Requirements 
+
+- Ansible 2.9 or higher
+- Raspberry Pi with Raspbian 
+- SSH access to the nodes
 
 # Installation
 
@@ -96,6 +104,17 @@ Features:
 - Manages invitations for managers and workers to join the Swarm.
 - Configures Docker Swarm settings.
 - Creates a Docker Visualizer service.
+
+## [ansible-role-install-keepalived](playbooks/roles/ansible-role-install-keepalived/)
+
+Installs and configures Keepalived for high availability using VRRP on target nodes.
+
+Features:
+- Installs Keepalived via the apt package manager.
+- Configures VRRP to ensure high availability of network services.
+- Dynamically assigns priorities to nodes to define the master and backup roles.
+- Manages Keepalived services, ensuring they are properly restarted and running.
+- Automatically handles failover between nodes in case of failure.
 
 # License
 GPLv3
